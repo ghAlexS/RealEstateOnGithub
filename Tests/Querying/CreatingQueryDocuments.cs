@@ -22,14 +22,14 @@
 
         public class Person
         {
-            public string name { get; set; }
+            public string Name { get; set; }
         }
 
         [Test]
         public void TypedQuery()
         {
-            var query = Query<Person>.NE(p => p.name, "anne");
-            var query2 = Builders<Person>.Filter.Ne(p => p.name, "anne");
+            var query = Query<Person>.NE(p => p.Name, "anne");
+            var query2 = Builders<Person>.Filter.Ne(p => p.Name, "anne");
 
             Console.WriteLine(query);
 
@@ -40,7 +40,7 @@
         [Test]
         public void QueryExpressions()
         {
-            var query = Query<Person>.Where(p => p.name == "anne");
+            var query = Query<Person>.Where(p => p.Name == "anne");
 
             Console.WriteLine(query);
         }
