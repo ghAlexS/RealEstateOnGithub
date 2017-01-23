@@ -1,65 +1,65 @@
 ﻿namespace RealEstate.Rentals
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using MongoDB.Bson;
-	using MongoDB.Bson.Serialization.Attributes;
+    using System.Collections.Generic;
+    using System.Linq;
+    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
 
-	[BsonIgnoreExtraElements]
-	public class ZipCode
-	{
-		[BsonId]
-		public string Id { get; set; }
+    [BsonIgnoreExtraElements]
+    public class ZipCode
+    {
+        [BsonId]
+        public string Id { get; set; }
 
-		[BsonElement("city")]
-		public string City { get; set; }
+        [BsonElement("city")]
+        public string City { get; set; }
 
-		[BsonElement("state")]
-		public string State { get; set; }
-	}
+        [BsonElement("state")]
+        public string State { get; set; }
+    }
 
-	public class Rental
-	{
-		[BsonRepresentation(BsonType.ObjectId)]
-		public string Id { get; set; }
+    public class Rental
+    {
+        public List<string> Address = new List<string>();
 
-		public string Description { get; set; }
-		public int NumberOfRooms { get; set; }
-		public List<string> Address = new List<string>();
+        public List<PriceAdjustment> Adjustments = new List<PriceAdjustment>();
 
-		[BsonRepresentation(BsonType.Double)]
-		public decimal Price { get; set; }
+        public Rental()
+        {
+        }
 
-		public string ImageId { get; set; }
+        public Rental(PostRental postRental)
+        {
+            Description = postRental.Description;
+            NumberOfRooms = postRental.NumberOfRooms;
+            Price = postRental.Price;
+            Address = (postRental.Address ?? string.Empty).Split('\n').ToList();
+            ZipCode = postRental.ZipCode;
+        }
 
-		public string ZipCode { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
-		public List<PriceAdjustment> Adjustments = new List<PriceAdjustment>();
+        public string Description { get; set; }
+        public int NumberOfRooms { get; set; }
 
-		public Rental()
-		{
-		}
+        [BsonRepresentation(BsonType.Double)]
+        public decimal Price { get; set; }
 
-		public Rental(PostRental postRental)
-		{
-			Description = postRental.Description;
-			NumberOfRooms = postRental.NumberOfRooms;
-			Price = postRental.Price;
-			Address = (postRental.Address ?? string.Empty).Split('\n').ToList();
-			ZipCode = postRental.ZipCode;
-		}
+        public string ImageId { get; set; }
 
-		public void AdjustPrice(AdjustPrice adjustPrice)
-		{
-			var adjustment = new PriceAdjustment(adjustPrice, Price);
-			Adjustments.Add(adjustment);
-			Price = adjustPrice.NewPrice;
-		}
+        public string ZipCode { get; set; }
 
-		public bool HasImage()
-		{
-			return !String.IsNullOrWhiteSpace(ImageId);
-		}
-	}
+        public void AdjustPrice(AdjustPrice adjustPrice)
+        {
+            var adjustment = new PriceAdjustment(adjustPrice, Price);
+            Adjustments.Add(adjustment);
+            Price = adjustPrice.NewPrice;
+        }
+
+        public bool HasImage()
+        {
+            return !string.IsNullOrWhiteSpace(ImageId);
+        }
+    }
 }

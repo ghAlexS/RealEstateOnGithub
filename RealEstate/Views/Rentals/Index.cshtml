@@ -8,11 +8,11 @@
 
 @using (Html.BeginForm())
 {
-	<label for="PriceLimit">Price Limit</label>
-	<input type="text" name="PriceLimit" value="@Model.Filters.PriceLimit" />
-	<label for="MinimumRooms">Minimum Rooms</label>
-	<input type="text" name="MinimumRooms" value="@Model.Filters.MinimumRooms" />
-	<input type="submit" value="Search" />
+    <label for="PriceLimit">Price Limit</label>
+    <input type="text" name="PriceLimit" value="@Model.Filters.PriceLimit"/>
+    <label for="MinimumRooms">Minimum Rooms</label>
+    <input type="text" name="MinimumRooms" value="@Model.Filters.MinimumRooms"/>
+    <input type="submit" value="Search"/>
 }
 
 <p>
@@ -47,19 +47,19 @@
                 @Html.DisplayFor(modelItem => rental.NumberOfRooms)
             </td>
             <td>
-                @String.Join(" ", rental.Address)
+                @string.Join(" ", rental.Address)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => rental.Price)
             </td>
             <td>
-                @Html.ActionLink("Adjust Price", "AdjustPrice", new { id = rental.Id })
+                @Html.ActionLink("Adjust Price", "AdjustPrice", new {id = rental.Id})
             </td>
             <td>
-                @Html.ActionLink("Image", "AttachImage", new { id = rental.Id })
-            </td>  
-			<td>
-                @Html.ActionLink("Delete", "Delete", new { id = rental.Id })
+                @Html.ActionLink("Image", "AttachImage", new {id = rental.Id})
+            </td>
+            <td>
+                @Html.ActionLink("Delete", "Delete", new {id = rental.Id})
             </td>
         </tr>
     }
