@@ -26,6 +26,9 @@
     <Content Include="Graph1.dgml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Graph1_1.dgml">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ModelDefinition\ModelingProject1.uml">
       <SubType>Content</SubType>
     </Content>
