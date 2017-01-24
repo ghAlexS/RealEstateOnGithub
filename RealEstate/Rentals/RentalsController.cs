@@ -166,9 +166,7 @@
             try
             {
                 var stream = ContextNew.ImagesBucket.OpenDownloadStream(new ObjectId(id));
-#pragma warning disable 618
                 var contentType = stream.FileInfo.ContentType
-#pragma warning restore 618
                                   ?? stream.FileInfo.Metadata["contentType"].AsString;
                 return File(stream, contentType);
             }
