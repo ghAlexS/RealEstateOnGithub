@@ -34,6 +34,7 @@
                 .OrderBy(r => r.Price)
                 .ThenByDescending(r => r.NumberOfRooms)
                 .ToListAsync();
+
             var model = new RentalsList
             {
                 Rentals = rentals,
