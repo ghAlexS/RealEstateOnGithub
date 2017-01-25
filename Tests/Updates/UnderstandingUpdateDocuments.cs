@@ -87,7 +87,7 @@
             var rental = new Rental {Price = 100};
             var adjustPrice = new AdjustPrice {NewPrice = 200, Reason = "Charge more!!!"};
             var adjustment = new PriceAdjustment(adjustPrice, rental.Price);
-
+            
             var modificationUpdate = Update<Rental>
                 .Push(r => r.Adjustments, adjustment)
                 .Set(r => r.Price, adjustPrice.NewPrice);

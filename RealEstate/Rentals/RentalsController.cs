@@ -15,10 +15,10 @@
     {
         public ZipCode[] ZipCodes { get; set; }
     }
-
+    
     public class RentalsController : Controller
     {
-        public readonly RealEstateContextNewApis ContextNew = new RealEstateContextNewApis();
+        private readonly RealEstateContextNewApis _contextNew = new RealEstateContextNewApis();
 
         public async Task<ActionResult> Index(RentalsFilter filters)
         {
@@ -41,10 +41,11 @@
             };
             return View(model);
         }
+        
 
         private IMongoQueryable<Rental> FilterRentals(RentalsFilter filters)
         {
-            var rentals = ContextNew.Rentals.AsQueryable();
+            var rentals = _contextNew.Rentals.AsQueryable();
 
             if (filters.MinimumRooms.HasValue)
                 rentals = rentals
@@ -66,7 +67,7 @@
         public async Task<ActionResult> Post(PostRental postRental)
         {
             var rental = new Rental(postRental);
-            await ContextNew.Rentals.InsertOneAsync(rental);
+            await _contextNew.Rentals.InsertOneAsync(rental);
             return RedirectToAction("Index");
         }
 
@@ -79,7 +80,7 @@
         private Rental GetRental(string id)
         {
             //var rental = Context.Rentals.FindOneById(new ObjectId(id));
-            var rental = ContextNew.Rentals
+            var rental = _contextNew.Rentals
                 .Find(r => r.Id == id)
                 .FirstOrDefault();
             return rental;
@@ -91,7 +92,7 @@
             var rental = GetRental(id);
             rental.AdjustPrice(adjustPrice);
             //Context.Rentals.Save(rental);
-            await ContextNew.Rentals.ReplaceOneAsync(r => r.Id == id, rental);
+            await _contextNew.Rentals.ReplaceOneAsync(r => r.Id == id, rental);
             return RedirectToAction("Index");
         }
 
@@ -111,14 +112,14 @@
         public async Task<ActionResult> Delete(string id)
         {
             //Context.Rentals.Remove(Query.EQ("_id", new ObjectId(id)));
-            await ContextNew.Rentals.DeleteOneAsync(r => r.Id == id);
+            await _contextNew.Rentals.DeleteOneAsync(r => r.Id == id);
             return RedirectToAction("Index");
         }
 
         public string PriceDistribution()
         {
             return new QueryPriceDistribution()
-                .RunLinq(ContextNew.Rentals)
+                .RunLinq(_contextNew.Rentals)
                 .ToJson();
         }
 
@@ -140,7 +141,7 @@
 
         private async Task DeleteImageAsync(Rental rental)
         {
-            await ContextNew.ImagesBucket.DeleteAsync(new ObjectId(rental.ImageId));
+            await _contextNew.ImagesBucket.DeleteAsync(new ObjectId(rental.ImageId));
             await SetRentalImageIdAsync(rental.Id, null);
         }
 
@@ -150,7 +151,7 @@
             {
                 Metadata = new BsonDocument("contentType", file.ContentType)
             };
-            var imageId = await ContextNew.ImagesBucket
+            var imageId = await _contextNew.ImagesBucket
                 .UploadFromStreamAsync(file.FileName, file.InputStream, options);
             await SetRentalImageIdAsync(rentalId, imageId.ToString());
         }
@@ -158,14 +159,14 @@
         private async Task SetRentalImageIdAsync(string rentalId, string imageId)
         {
             var setRentalImageId = Builders<Rental>.Update.Set(r => r.ImageId, imageId);
-            await ContextNew.Rentals.UpdateOneAsync(r => r.Id == rentalId, setRentalImageId);
+            await _contextNew.Rentals.UpdateOneAsync(r => r.Id == rentalId, setRentalImageId);
         }
 
         public ActionResult GetImage(string id)
         {
             try
             {
-                var stream = ContextNew.ImagesBucket.OpenDownloadStream(new ObjectId(id));
+                var stream = _contextNew.ImagesBucket.OpenDownloadStream(new ObjectId(id));
                 var contentType = stream.FileInfo.ContentType
                                   ?? stream.FileInfo.Metadata["contentType"].AsString;
                 return File(stream, contentType);
@@ -178,10 +179,10 @@
 
         public ActionResult JoinPreLookup()
         {
-            var rentals = ContextNew.Rentals.Find(new BsonDocument()).ToList();
+            var rentals = _contextNew.Rentals.Find(new BsonDocument()).ToList();
             var rentalZips = rentals.Select(r => r.ZipCode).Distinct().ToArray();
 
-            var zipsById = ContextNew.Database.GetCollection<ZipCode>("zips")
+            var zipsById = _contextNew.Database.GetCollection<ZipCode>("zips")
                 .Find(z => rentalZips.Contains(z.Id))
                 .ToList()
                 .ToDictionary(d => d.Id);
@@ -201,10 +202,10 @@
 
         public ActionResult JoinWithLookup()
         {
-            var report = ContextNew.Rentals
+            var report = _contextNew.Rentals
                 .Aggregate()
                 .Lookup<Rental, ZipCode, RentalWithZipCodes>(
-                    ContextNew.Database.GetCollection<ZipCode>("zips"),
+                    _contextNew.Database.GetCollection<ZipCode>("zips"),
                     r => r.ZipCode,
                     z => z.Id,
                     w => w.ZipCodes

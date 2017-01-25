@@ -20,9 +20,9 @@
 
     public class Rental
     {
-        public List<string> Address = new List<string>();
+        public  List<string> Address = new List<string>();
 
-        public List<PriceAdjustment> Adjustments = new List<PriceAdjustment>();
+        public  List<PriceAdjustment> Adjustments = new List<PriceAdjustment>();
 
         public Rental()
         {
