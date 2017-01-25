@@ -22,8 +22,7 @@
 
         public async Task<ActionResult> Index(RentalsFilter filters)
         {
-            ////iowueriowuoeruwor zzzzzzzz
-            ////iowueriowuoeruwor  gggg vvv
+            ////iowueriowuoeruwor
             var rentals = await FilterRentals(filters)
                 .Select(r => new RentalViewModel
                 {
