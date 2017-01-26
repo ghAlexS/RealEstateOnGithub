@@ -23,7 +23,7 @@
         public async Task<ActionResult> Index(RentalsFilter filters)
         {
             ////iowueriowuoeruwor zzzzzzzz
-            ////iowueriowuoeruwor  gggg consolecommit
+            ////iowueriowuoeruwor  gggg consolecommitvvvv
             var rentals = await FilterRentals(filters)
                 .Select(r => new RentalViewModel
                 {
